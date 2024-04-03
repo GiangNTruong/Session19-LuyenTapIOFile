@@ -54,25 +54,35 @@ public class Categories implements Serializable {
     public void setCatalogStatus(boolean catalogStatus) {
         this.catalogStatus = catalogStatus;
     }
-    public void inputData(Scanner scanner, List<Categories> categoriesList) {
+    public void inputData(Scanner scanner, List<Categories> categoriesList){
+        this.categoryName = validateCategoryName(scanner, categoriesList);
+        this.descriptions = validateDescriptions(scanner);
+        this.catalogStatus = validateCatalogStatus(scanner);
+    }
+
+    private String validateCategoryName(Scanner scanner, List<Categories> categoriesList) {
         System.out.println("Nhập tên danh mục:");
-        String catalogNameInput = scanner.nextLine();
-        while (catalogNameInput.length() > 50 || isDuplicate(categoriesList, catalogNameInput)) {
+        while (true){
+            String catalogNameInput = scanner.nextLine();
+            if (catalogNameInput.length() <= 50 && !isDuplicate(categoriesList, catalogNameInput)) {
+                return catalogNameInput;
+            }
             System.out.println("Tên danh mục không được quá 50 ký tự và không được trùng lặp. Hãy nhập lại:");
-            catalogNameInput = scanner.nextLine();
         }
-        this.categoryName = catalogNameInput;
+    }
 
+    private String validateDescriptions(Scanner scanner) {
         System.out.println("Nhập mô tả danh mục:");
-        this.descriptions = scanner.nextLine();
+        return scanner.nextLine();
+    }
 
+    private boolean validateCatalogStatus(Scanner scanner) {
         System.out.println("Nhập trạng thái danh mục (true hoặc false):");
         while (!scanner.hasNextBoolean()) {
             System.out.println("Trạng thái danh mục phải là true hoặc false. Hãy nhập lại:");
             scanner.next();
         }
-        this.catalogStatus = scanner.nextBoolean();
-        scanner.nextLine();
+        return scanner.nextBoolean();
     }
 
     private boolean isDuplicate(List<Categories> arrCategories, String catalogNameInput) {

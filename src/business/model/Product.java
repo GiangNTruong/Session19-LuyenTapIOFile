@@ -76,7 +76,17 @@ public class Product implements Serializable {
     public void setCatalogId(int catalogId) {
         this.catalogId = catalogId;
     }
-    public void inputData(Scanner scanner, List<Product> productList, List<Categories> categoriesList,boolean isUpdating){
+    public void inputData(Scanner scanner, List<Product> productList, List<Categories> categoriesList, boolean isUpdating){
+        productId = validateProductId(scanner, productList, isUpdating);
+        productName = validateProductName(scanner, productList, isUpdating);
+        price = validatePrice(scanner);
+        description = validateDescription(scanner);
+        created = validateCreatedDate(scanner);
+        catalogId = validateCatalogId(scanner, categoriesList);
+        productStatus = validateProductStatus(scanner);
+    }
+
+    private String validateProductId(Scanner scanner, List<Product> productList, boolean isUpdating) {
         System.out.println("Nhập mã sản phẩm (4 ký tự, bắt đầu bằng 'C', 'S' hoặc 'A'): ");
         while (true){
             String newProductId = scanner.nextLine();
@@ -88,40 +98,46 @@ public class Product implements Serializable {
                 }
             }
             if (newProductId.matches("^[CSA].{3}$") && (!isDuplicateProductId || isUpdating)) {
-                productId = newProductId;
-                break;
+                return newProductId;
             }
             System.out.println("Mã sản phẩm không hợp lệ. Hãy nhập lại.");
         }
-
+    }
+    private String validateProductName(Scanner scanner, List<Product> productList, boolean isUpdating) {
         System.out.println("Nhập tên sản phẩm (từ 10-50 ký tự): ");
         while (true) {
-            productName = scanner.nextLine();
+            String newProductName = scanner.nextLine();
             boolean isDuplicateProductName = false;
             for (Product product : productList) {
-                if (product != null && product.getProductName().equals(productName)) {
+                if (product != null && product.getProductName().equals(newProductName)) {
                     isDuplicateProductName = true;
                     break;
                 }
             }
-            if (productName.length() >= 10 && productName.length() <= 50 &&(!isDuplicateProductName ||isUpdating) ) {
-                break;
+            if (newProductName.length() >= 10 && newProductName.length() <= 50 && (!isDuplicateProductName || isUpdating)) {
+                return newProductName;
             }
             System.out.println("Tên sản phẩm không hợp lệ. Hãy nhập lại.");
         }
+    }
 
+    private float validatePrice(Scanner scanner) {
         System.out.println("Nhập giá sản phẩm (lớn hơn 0): ");
         while (true) {
-            price = Float.parseFloat(scanner.nextLine());
-            if (price > 0) {
-                break;
+            float newPrice = Float.parseFloat(scanner.nextLine());
+            if (newPrice > 0) {
+                return newPrice;
             }
             System.out.println("Giá sản phẩm không hợp lệ. Hãy nhập lại.");
         }
+    }
 
+    private String validateDescription(Scanner scanner) {
         System.out.println("Nhập mô tả sản phẩm: ");
-        description = scanner.nextLine();
+        return scanner.nextLine();
+    }
 
+    private Date validateCreatedDate(Scanner scanner) {
         System.out.println("Nhập ngày nhập sản phẩm (định dạng dd/MM/yyyy): ");
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date createdDate = null;
@@ -132,8 +148,10 @@ public class Product implements Serializable {
                 System.out.println("Ngày nhập không hợp lệ. Hãy nhập lại.");
             }
         } while (createdDate == null);
-        created = createdDate;
+        return createdDate;
+    }
 
+    private int validateCatalogId(Scanner scanner, List<Categories> categoriesList) {
         System.out.println("Danh sách danh mục: ");
         for (int i = 0; i < categoriesList.size(); i++) {
             categoriesList.get(i).displayData();
@@ -156,14 +174,15 @@ public class Product implements Serializable {
                 System.out.println("Mã danh mục không tồn tại. Hãy nhập lại.");
             }
         }
-        this.catalogId = cateId;
-
-
-
-
-        System.out.println("Nhập trạng thái sản phẩm (0: Đang bán – 1: Hết hàng – 2: Không bán): ");
-        productStatus = Integer.parseInt(scanner.nextLine());
+        return cateId;
     }
+
+    private int validateProductStatus(Scanner scanner) {
+        System.out.println("Nhập trạng thái sản phẩm (0: Đang bán – 1: Hết hàng – 2: Không bán): ");
+        return Integer.parseInt(scanner.nextLine());
+    }
+
+
 
     private boolean isDuplicate(Product[] arrProduct, String input) {
         for (Product product : arrProduct) {
