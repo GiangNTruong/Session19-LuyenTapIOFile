@@ -85,13 +85,10 @@ public class Categories implements Serializable {
         return scanner.nextBoolean();
     }
 
+
     private boolean isDuplicate(List<Categories> arrCategories, String catalogNameInput) {
-        for (Categories category : arrCategories) {
-            if (category != null && category.getCategoryName().equals(catalogNameInput)) {
-                return true;
-            }
-        }
-        return false;
+        return arrCategories.stream()
+                .anyMatch(category -> category != null && category.getCategoryName().equals(catalogNameInput));
     }
     public void displayData(){
         System.out.println("Categories{" +
